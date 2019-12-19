@@ -1,0 +1,21 @@
+##############################
+# Delete machines in Cylance #
+##############################
+
+$devices = Import-Csv 'list_of_machine_names'
+$LogTime = Get-Date -Format "MM-dd-yyyy_hh-mm-ss"
+$LogFile = 'path_to_directory'+"Cylance Delete_LOG_"+$LogTime+".log"
+$device = ""
+$ID = 0
+Foreach ($device in $devices)
+{
+    $ID = Get-CyDeviceList | Where name -like ($device.computer)
+        If ($ID){
+            write-host $device.computer
+            Remove-CyDevice -Device $ID
+            "$ID Has been removed" | Out-File $LogFile -Append -Force
+            }
+        else {
+            "$device is not found" | Out-File $LogFile -Append -Force
+            }
+}
